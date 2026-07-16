@@ -1,6 +1,7 @@
 import requests
 import pandas as pd
 from datetime import date
+import os
 LATITUDE = 52.774319
 LONGITUDE = 23.877606
 LOCATION_NAME = "Białowieża Forest"
@@ -32,7 +33,6 @@ def get_forecast(lat, lon):
     return response.json()
 today = date.today()
 current_year = today.year
-
 # Collect historical data for the last 5 years
 all_data = []
 
@@ -75,3 +75,24 @@ print(forecast_df)
 historical_df.to_csv("historical_weather.csv", index=False)
 forecast_df.to_csv("forecast_weather.csv", index=False)
 print("\nData saved to CSV files.")
+#a new function that finds the current temperature
+def get_current_weather(lat, lon):
+    url = "https://api.open-meteo.com/v1/forecast"
+    params = {
+        "latitude": lat,
+        "longitude": lon,
+        "current": "temperature_2m",
+        "timezone": "America/Los_Angeles"
+    }
+    response = requests.get(url, params=params)
+    return response.json()
+current_data = get_current_weather(LATITUDE, LONGITUDE)
+current_temp = current_data["current"]["temperature_2m"]
+current_time = current_data["current"]["time"]
+log_df = pd.DataFrame({
+    "date": [str(today)],
+    "time": [current_time],
+    "temperature_2m": [current_temp]
+})
+log_file = "daily_log.csv"
+log_df.to_csv(log_file, mode = "a", header=not os.path.isfile(log_file), index=False)
