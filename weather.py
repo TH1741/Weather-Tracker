@@ -98,4 +98,4 @@ log_df = pd.DataFrame({
 "temp_f": [temp_f]
 })
 log_file = "daily_log.csv"
-log_df.to_csv(log_file, mode = "a", header=not os.path.isfile(log_file), index=False
+log_df.to_csv(log_file, mode = "a", header=not os.path.isfile(log_file), index=False)
